@@ -19,6 +19,7 @@ class Path:
     def __init__(self):
         self.model_path = params.MODEL_PATH
         self.log_path = params.LOG_PATH
+        self.model_log_path = params.MODEL_NAME
 
     def create_model_path(self):
         """This method creates a subdirectory for trained models."""
@@ -29,4 +30,11 @@ class Path:
         """This method creates a subdirectory for saving training logs."""
         if self.log_path not in os.listdir('.'):
             os.makedirs(self.log_path)
+
+    def create_model_log_path(self):
+        """This method creates a subdirectory in <logs> to save training logs
+        of a specific model.
+        """
+        if self.model_log_path not in os.listdir(self.model_path):
+            os.makedirs(os.path.join(self.model_path, self.model_log_path))
     

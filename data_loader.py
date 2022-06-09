@@ -6,6 +6,7 @@ import math
 import numpy as np
 
 from PIL import Image
+from torchvision import transforms
 from parameters import Params
 
 # Params class containing parameters for all visualization.
@@ -26,8 +27,20 @@ class DataLoader:
         # Shuffle ids for training
         random.shuffle(self.img_id_list)
 
+        # Data augmentation
+        self.transformation = transforms.Compose([
+            transforms.RandomRotation(90),
+            transforms.GaussianBlur((5, 5))
+            #transforms.RandomPerspective()
+        ])
+        self.transformation_rgb = transforms.Compose([
+            transforms.ColorJitter()
+        ])
+        
+
     def load_batch(self):
         for i, (img, label) in enumerate(self.load()):
+            img = self.transformation(img)
             if i % self.batch_size == 0:
                 img_batch = img
                 label_batch = label
@@ -73,7 +86,7 @@ class DataLoader:
         """Returns all the ids of images present in the 'data' folder."""
         img_id_dict = {}
         for img_path in glob.iglob('%s/*/*/*' % self.path):
-            if not img_path.endswith('.png'):
+            if not img_path.endswith('RGB.png'):
                 continue
             
             img_cls = img_path.split('\\')[-3]
@@ -93,7 +106,7 @@ class DataLoader:
     def get_cls_id(self):
         """Returns a list of class names in fixed order (according to the txt file)."""
         cls_list = []
-        with open(os.path.join(params.DATA_PATH, 'cls.txt'), 'r') as f:
+        with open(os.path.join(params.DATA_PATH, params.LABEL_FILE), 'r') as f:
             file = f.readlines()
             for cls in file:
                 # remove '\n' from string
@@ -111,6 +124,10 @@ class DataLoader:
         n_val = round(n_steps * self.train_val_split)
         n_train = n_steps - n_val
         return n_train, n_val
+
+    def augment(self, img):
+        """Return augmented images."""
+
 
 
 

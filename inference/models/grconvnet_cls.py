@@ -45,7 +45,7 @@ class GrCLS(GraspModel):
 
         self.dropout1 = nn.Dropout(p=prob)
 
-        self.fc1 = nn.Linear(16384, 30, bias=True)
+        self.fc1 = nn.Linear(65536, 5, bias=True)
 
         for m in self.modules():
             if isinstance(m, (nn.Conv2d, nn.ConvTranspose2d, nn.Linear)):
