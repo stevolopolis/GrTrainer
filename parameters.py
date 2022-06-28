@@ -6,18 +6,19 @@ class Params:
     """
     def __init__(self):
         # Model name
-        self.MODEL_NAME = 'grconvCLS_top5'
+        self.MODEL_NAME = 'alexnetGrasp_pretrained_rgb_v14'
 
         # device: cpu / gpu
         self.DEVICE = torch.device('cuda') if torch.cuda.is_available \
                                       else torch.device('cpu')
         # Training params
         self.NUM_CLASS = 5
-        self.OUTPUT_SIZE = 128  # 128 for training grCLS
-        self.IMG_SIZE = (4, self.OUTPUT_SIZE, self.OUTPUT_SIZE) 
-        self.EPOCHS = 50
+        self.NUM_CHANNEL = 3
+        self.OUTPUT_SIZE = 224  # 128 for training grCLS
+        self.IMG_SIZE = (self.NUM_CHANNEL, self.OUTPUT_SIZE, self.OUTPUT_SIZE) 
+        self.EPOCHS = 250
         self.LR = 1e-4
-        self.BATCH_SIZE = 16
+        self.BATCH_SIZE = 64
         self.TRAIN_VAL_SPLIT = 0.2
 
         # Paths
