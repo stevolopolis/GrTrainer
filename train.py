@@ -54,9 +54,9 @@ paths.create_model_log_path()
 
 # Load model
 # Gr-convnet CLS model
-#model = GrCLS().to(params.DEVICE)
+#model = GrCLS(n_cls=params.NUM_CLASS).to(params.DEVICE)
 # Raw AlexNet CLS model
-#model = AlexNet().to(params.DEVICE)
+#model = AlexNet(n_cls=params.NUM_CLASS).to(params.DEVICE)
 # AlexNet with 1st, 2nd layer pretrained on Imagenet
 model = PretrainedAlexnet(n_cls=params.NUM_CLASS).to(params.DEVICE)
 

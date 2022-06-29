@@ -24,7 +24,7 @@ from torchvision.models import alexnet
 
 
 class AlexNet(nn.Module):
-    def __init__(self, input_channels=3, dropout=False, channel_size=16, n_cls=5):
+    def __init__(self, input_channels=3, channel_size=16, n_cls=5):
         super(AlexNet, self).__init__()
         self.features = nn.Sequential(
             nn.Conv2d(input_channels, channel_size, kernel_size=11, stride=4, padding=2),
