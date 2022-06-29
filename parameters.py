@@ -1,11 +1,19 @@
+"""This file contains the Param class which contains all the 
+parameters needed for data loading, data processing, model training,
+and model processing.
+
+This class is imported in all codes required for training. Any
+changes to parameters could be done collectively here.
+"""
+
 import torch
 
 class Params:
     """
-    Parameters for AM visualization on gr-convnet
+    Parameters for training models.
     """
     def __init__(self):
-        # Model name
+        # Model name -- '<type>_<raw/pretrained>_<input>_<version>'
         self.MODEL_NAME = 'alexnetGrasp_pretrained_rgb_v14'
 
         # device: cpu / gpu
@@ -14,7 +22,7 @@ class Params:
         # Training params
         self.NUM_CLASS = 5
         self.NUM_CHANNEL = 3
-        self.OUTPUT_SIZE = 224  # 128 for training grCLS
+        self.OUTPUT_SIZE = 224  # 128 was used for training grCLS
         self.IMG_SIZE = (self.NUM_CHANNEL, self.OUTPUT_SIZE, self.OUTPUT_SIZE) 
         self.EPOCHS = 250
         self.LR = 1e-4
