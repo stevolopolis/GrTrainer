@@ -14,17 +14,17 @@ class Params:
     """
     def __init__(self):
         # Model name -- '<type>_<raw/pretrained>_<input>_<version>'
-        self.MODEL_NAME = 'alexnetGrasp_pretrained_rgb_v14'
+        self.MODEL_NAME = 'alexnetGrasp_depthconcat_v1'
 
         # device: cpu / gpu
         self.DEVICE = torch.device('cuda') if torch.cuda.is_available \
                                       else torch.device('cpu')
         # Training params
         self.NUM_CLASS = 5
-        self.NUM_CHANNEL = 3
+        self.NUM_CHANNEL = 4
         self.OUTPUT_SIZE = 224  # 128 was used for training grCLS
         self.IMG_SIZE = (self.NUM_CHANNEL, self.OUTPUT_SIZE, self.OUTPUT_SIZE) 
-        self.EPOCHS = 250
+        self.EPOCHS = 100
         self.LR = 1e-4
         self.BATCH_SIZE = 64
         self.TRAIN_VAL_SPLIT = 0.2

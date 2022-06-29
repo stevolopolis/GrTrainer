@@ -11,14 +11,14 @@ import os
 
 from parameters import Params
 from inference.models.grconvnet_cls import GrCLS
-from inference.models.alexnet import AlexNet, PretrainedAlexnet, myAlexNet
+from inference.models.alexnet import AlexNet, PretrainedAlexnet, myAlexNet, PretrainedAlexnetv2
 from evaluation import get_test_acc, get_grasp_acc, visualize_grasp
 
 params = Params()
 
 model_name = params.MODEL_NAME
 weights_dir = params.MODEL_PATH
-for epoch in range(46, 47):
+for epoch in range(70, 80):
     weights_path = os.path.join(weights_dir, model_name, model_name + '_epoch%s.pth' % epoch)
 
     # Gr-convnet CLS model
@@ -26,15 +26,17 @@ for epoch in range(46, 47):
     # Raw AlexNet CLS model
     #model = AlexNet(n_cls=params.NUM_CLASS).to(params.DEVICE)
     # AlexNet with 1st, 2nd layer pretrained on Imagenet
-    model = PretrainedAlexnet(n_cls=params.NUM_CLASS).to(params.DEVICE)
+    #model = PretrainedAlexnet(n_cls=params.NUM_CLASS).to(params.DEVICE)
+    # AlexNet with 1st, 2nd layer pretrained on Imagenet
+    model = PretrainedAlexnetv2(n_cls=params.NUM_CLASS).to(params.DEVICE)
     model.load_state_dict(torch.load(weights_path))
     model.eval()
 
     # Get test acc for CLS model
-    #accuracy, loss = get_test_acc(model)
+    accuracy, loss = get_test_acc(model)
     # Get test acc for Grasp model
-    accuracy, loss = get_grasp_acc(model)
+    #accuracy, loss = get_grasp_acc(model)
     print('Epoch: %s' % epoch, accuracy, loss)
     
     # Visualize grasp predictions one by one
-    visualize_grasp(model)
+    #visualize_grasp(model)

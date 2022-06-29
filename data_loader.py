@@ -167,12 +167,12 @@ class DataLoader:
             grasp_list = np.array(grasp_list)
             
             # Normalize and combine rgb with depth channel
-            img_rgbd = self.process(img_rgb, None)
+            img_rgbd = self.process(img_rgb, img_d)
 
             # Manual augmentaion random parameters
             degree = random.choice([0, 90, -90, 180])
-            ratio = random.uniform(0.8, 0.85)
-            jitter_x = random.uniform(-0.075, 0.075)
+            ratio = random.uniform(0.75, 0.85)
+            jitter_x = random.uniform(0.075, 0.075)
             jitter_y = random.uniform(-0.075, 0.075)
             
             # Augmentation on image -- random resized crops with jitters
