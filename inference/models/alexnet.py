@@ -1,8 +1,20 @@
-"""This file contains the architeture of a Gr-Convnet variant specified for
-classification of 30 classes. 
+"""
+This file contains three variants of our Alexnet class,
+each with slightly modified architectures or weight initialization.
+The current best model is trained using the class: 'PretrainedAlexnet'.
 
-The main backbone is unchanged and only a linear layer is concatenated to the
-end to prevent any changes to the expressivity of the original architecture."""
+Alexnet:
+    - Conventional Alexnet architecture with reduced no. of channels
+      and fc-layers
+myAlexNet:
+    - Modified Alexnet architecture with added BatchNorm layers
+PretrainedAlexnet:
+    - Exact copy of Alexnet architecture with reduced fc layer
+      (removed dropout layer proven to have better performance)
+    - First two layers loaded with Imagenet pretraining weights
+
+
+"""
 
 import torch
 import torch.nn as nn
@@ -106,11 +118,8 @@ class PretrainedAlexnet(nn.Module):
         self.features = pretrained_alexnet.features
         self.avgpool = nn.AdaptiveAvgPool2d((6, 6))
         self.classifier = nn.Sequential(
-            #nn.Dropout(p=.2),
             nn.Linear(256 * 6 * 6, 64),
             nn.ReLU(inplace=True),
-            #nn.Linear(256, 128),
-            #nn.ReLU(inplace=True),
             nn.Linear(64, n_cls)
         )
 
@@ -129,6 +138,7 @@ class PretrainedAlexnet(nn.Module):
         x = self.classifier(x)
         return x
 
+    # Unfreeze pretrained layers (1st & 2nd CNN layer)
     def unfreeze_backbone(self):
         for param in self.features.parameters():
             param.requires_grad = True
