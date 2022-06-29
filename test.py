@@ -1,3 +1,11 @@
+"""
+This file tests the model's performance on the testing dataset.
+
+For CLS, this script returns the testing accuracy.
+For Grasp, this script returns the testing accuracy and visualizes the
+grasp prediction.
+"""
+
 import torch
 import os
 
@@ -13,14 +21,20 @@ weights_dir = params.MODEL_PATH
 for epoch in range(46, 47):
     weights_path = os.path.join(weights_dir, model_name, model_name + '_epoch%s.pth' % epoch)
 
-    #model = GrCLS().to(params.DEVICE)
-    #model = AlexNet().to(params.DEVICE)
-    #model = myAlexNet().to(params.DEVICE)
+    # Gr-convnet CLS model
+    #model = GrCLS(n_cls=params.NUM_CLASS).to(params.DEVICE)
+    # Raw AlexNet CLS model
+    #model = AlexNet(n_cls=params.NUM_CLASS).to(params.DEVICE)
+    # AlexNet with 1st, 2nd layer pretrained on Imagenet
     model = PretrainedAlexnet(n_cls=params.NUM_CLASS).to(params.DEVICE)
     model.load_state_dict(torch.load(weights_path))
     model.eval()
 
+    # Get test acc for CLS model
     #accuracy, loss = get_test_acc(model)
-    #accuracy, loss = get_grasp_acc(model)
-    #print('Epoch: %s' % epoch, accuracy, loss)
+    # Get test acc for Grasp model
+    accuracy, loss = get_grasp_acc(model)
+    print('Epoch: %s' % epoch, accuracy, loss)
+    
+    # Visualize grasp predictions one by one
     visualize_grasp(model)
