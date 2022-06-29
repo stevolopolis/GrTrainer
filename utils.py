@@ -56,7 +56,7 @@ def epoch_logger(network_name, epoch, train_loss, val_loss, test_loss, train_acc
 
 
 def get_correct_preds(output, label):
-    """Return number of correct predictions out of number of instances."""
+    """Returns number of correct predictions out of number of instances."""
     _, prediction = torch.max(output.data, 1)
     _, ground_truth = torch.max(label.data, 1)
     total = label.size(0)
@@ -65,14 +65,9 @@ def get_correct_preds(output, label):
 
 
 def get_acc(correct, total):
-    """Return accuracy given number of correct predictions and total 
+    """Returns accuracy given number of correct predictions and total 
     number of predictions."""
     return round(100 * correct / total, 2)
-
-
-def model_test(model, test_path):
-    """Return testing results of model using data in <test_path>."""
-    pass
 
 
 # Scratch code for visualizing image after augmentations.

@@ -1,11 +1,11 @@
 import torch
-import numpy as np
 
 from shapely.geometry import Polygon
 from math import pi 
 
 
 def bboxes_to_grasps(bboxes):
+    """Converts bounding boxxes to grasp boxes."""
     # convert bbox to grasp representation -> tensor([x, y, theta, h, w])
     x = bboxes[:,0] + (bboxes[:,4] - bboxes[:,0])/2
     y = bboxes[:,1] + (bboxes[:,5] - bboxes[:,1])/2 
@@ -17,6 +17,7 @@ def bboxes_to_grasps(bboxes):
 
 
 def grasps_to_bboxes(grasps):
+    """Converts grasp boxes to bounding boxes."""
     # convert grasp representation to bbox
     x = grasps[:,0] * 1024
     y = grasps[:,1] * 1024
@@ -37,6 +38,7 @@ def grasps_to_bboxes(grasps):
 
 
 def box_iou(bbox_value, bbox_target):
+    """Returns the iou between <bbox_value> and <bbox_target>."""
     p1 = Polygon(bbox_value.view(-1,2).tolist())
     p2 = Polygon(bbox_target.view(-1,2).tolist())
     iou = p1.intersection(p2).area / (p1.area +p2.area -p1.intersection(p2).area) 
@@ -44,6 +46,13 @@ def box_iou(bbox_value, bbox_target):
 
 
 def get_correct_grasp_preds(output, target):
+    """Returns number of correct predictions out of number of instances.
+    
+    A correct prediction is defined as a grasp prediction that meets
+    the following criterions with at least one grasp candidate:
+        - iou > 0.25
+        - angle difference < 30
+    """
     bbox_output = grasps_to_bboxes(output)
     correct = 0
     for i in range(len(target)):
