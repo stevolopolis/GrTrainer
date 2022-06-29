@@ -1,3 +1,11 @@
+"""
+This file contains the functions responsible for creating the
+training and testing datasets in the <data> folder.
+
+This file also contains a function that visualizes all grasp
+candidates of an image.
+"""
+
 import glob
 import os
 import shutil
@@ -5,14 +13,13 @@ import cv2
 import random
 import numpy as np
 
-from venv import create
-
 from data_loader import DataLoader
 from parameters import Params
 from grasp_utils import grasps_to_bboxes
 
 params = Params()
 
+# Statistics of each class of data
 """{'Clothes_hanger': 5, 'walkman': 11, 'fish': 15, 'usb_drive': 24,
     'violin': 28, 'toy_car': 31, 'insect': 35, 'fork': 37, 'bed': 42,
     'Photo_Frame': 44, 'table': 59, 'laptop': 64, 'can': 65, 'cup': 68,
@@ -23,9 +30,9 @@ params = Params()
 
 DATA_PATH = 'data'
 
-top_5 = ['Chair', 'Lamp', 'figurines', 'plants', 'pen+pencil']  # 190
+top_5 = ['Chair', 'Lamp', 'figurines', 'plants', 'pen+pencil']  # cls instances -- 190
 top_10 = ['gun', 'computer_monitor', 'toy_plane', 'guitar',
-          'bottle', 'pen+pencil', 'plants', 'figurines', 'Lamp', 'Chair']  # 143
+          'bottle', 'pen+pencil', 'plants', 'figurines', 'Lamp', 'Chair']  # cls instances -- 143
 
 def create_test(top_n_list, top_n_str, n_test_per_class):
     for cls in top_n_list:
@@ -181,6 +188,7 @@ def get_grasp_files():
 
 
 def test_data_loader():
+    """Identical dataloader process as written in data_loader.py."""
     data_loader = DataLoader(params.TRAIN_PATH, 2, params.TRAIN_VAL_SPLIT)
     for img, label, candidates in data_loader.load_grasp():
         target_bbox = grasps_to_bboxes(label)
@@ -221,11 +229,15 @@ def draw_bbox(img, bbox, color):
 
 
 if __name__ == '__main__':
+    # Get dataset statistics
     #count()
+    # Separate and create train/test dataset folders for CLS training
     #create_cls_txt(top_10, '%s/cls_top_10.txt' % DATA_PATH)
     #create_top_n(top_10, 'top_10', 143)
     #create_test(top_10, 'top_10', 15)
+    # Add grasping .txt files to the train/test dataset folders
     #no_match, total = find_grasp_file()
     #print(no_match, total)
     #get_grasp_files()
+    # Visualize Grasp training data to make sure it all makes sens
     test_data_loader()
