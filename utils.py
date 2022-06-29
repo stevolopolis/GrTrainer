@@ -8,6 +8,7 @@ params = Params()
 
 
 class AddGaussianNoise(torch.nn.Module):
+    """Gaussian noise augmentation fn used in DataLoader class."""
     def __init__(self, mean=0., std=1.):
         self.std = std
         self.mean = mean
@@ -18,39 +19,16 @@ class AddGaussianNoise(torch.nn.Module):
     def __repr__(self):
         return self.__class__.__name__ + '(mean={0}, std={1})'.format(self.mean, self.std)
 
-"""from PIL import Image
-import numpy as np
-import cv2
-from torchvision import transforms
-import torch.nn as nn
-aug = AddGaussianNoise(0, .025)
-img = Image.open('data/top_5/train/plants/2a7d62b731a04f5fa54b9afa882a89ed/0_2a7d62b731a04f5fa54b9afa882a89ed_RGB.png')
-img = np.array(img)
-img = img / 255
-cv2.imshow('file', img)
-cv2.waitKey(0)
-img = torch.tensor(img)
-img = torch.moveaxis(img, -1, 0)
-random_transforms = transforms.RandomApply(nn.ModuleList([AddGaussianNoise(0, .1)]), p=0.25)
-trans = transforms.Compose([
-    transforms.RandomResizedCrop((128, 128), scale=(.5, .6), ratio=(1, 1))
-])
-img = trans(img)
-img = torch.moveaxis(img, 0, -1)
-img = img.numpy()
-print(img.shape)
-img = np.clip(img, 0, 1)
-print(np.max(img), np.min(img))
-cv2.imshow('file', img)
-cv2.waitKey(0)"""
 
 def log_writer(network_name, epoch, step, loss, train=True):
     """Writes training losses into a log.txt file."""
     filename = '%s_log.txt' % network_name
+    # If log file does not exist, create a new .txt file and write training info
     if filename not in os.listdir(params.LOG_PATH):
         with open(os.path.join(params.LOG_PATH, filename), 'w') as f:
             initial_message = '%s Training Log at %s' % (network_name, datetime.datetime.now())
             f.write(initial_message + '\n')
+    # If log file exists, write loss info to new line
     else:
         with open(os.path.join(params.LOG_PATH, filename), 'a') as f:
             if train:
@@ -62,6 +40,7 @@ def log_writer(network_name, epoch, step, loss, train=True):
 
 
 def epoch_logger(network_name, epoch, train_loss, val_loss, test_loss, train_acc, val_acc, test_acc):
+    """Writes epoch loss and accuracy statistics to log fie."""
     filename = '%s_log.txt' % network_name
     with open(os.path.join(params.LOG_PATH, filename), 'a') as f:
         train_loss_mean = sum(train_loss) / len(train_loss)
@@ -94,3 +73,33 @@ def get_acc(correct, total):
 def model_test(model, test_path):
     """Return testing results of model using data in <test_path>."""
     pass
+
+
+# Scratch code for visualizing image after augmentations.
+# Feel free to copy other augmentation codes from DataLoader class
+# To visualize the effects of each augmentation.
+"""from PIL import Image
+import numpy as np
+import cv2
+from torchvision import transforms
+import torch.nn as nn
+aug = AddGaussianNoise(0, .025)
+img = Image.open('data/top_5/train/plants/2a7d62b731a04f5fa54b9afa882a89ed/0_2a7d62b731a04f5fa54b9afa882a89ed_RGB.png')
+img = np.array(img)
+img = img / 255
+cv2.imshow('file', img)
+cv2.waitKey(0)
+img = torch.tensor(img)
+img = torch.moveaxis(img, -1, 0)
+random_transforms = transforms.RandomApply(nn.ModuleList([AddGaussianNoise(0, .1)]), p=0.25)
+trans = transforms.Compose([
+    transforms.RandomResizedCrop((params.OUTPUT_SIZE, params.OUTPUT_SIZE), scale=(.75, .85), ratio=(1, 1))
+])
+img = trans(img)
+img = torch.moveaxis(img, 0, -1)
+img = img.numpy()
+print(img.shape)
+img = np.clip(img, 0, 1)
+print(np.max(img), np.min(img))
+cv2.imshow('file', img)
+cv2.waitKey(0)"""
