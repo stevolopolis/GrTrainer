@@ -2,6 +2,6 @@
 *.png
 *.pt
 *.png
-*.txt
+*log.txt
 *.pyc
 *.tiff
