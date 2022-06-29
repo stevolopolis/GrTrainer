@@ -58,7 +58,7 @@ class AlexNet(nn.Module):
 
 
 class myAlexNet(nn.Module):
-    def __init__(self, input_channels=4, dropout=False, prob=0.0, channel_size=16):
+    def __init__(self, input_channels=4, channel_size=16, n_cls=5):
         super(myAlexNet, self).__init__()
         self.conv1 = nn.Conv2d(input_channels, channel_size, kernel_size=3, stride=2, padding=1)
         self.bn1 = nn.BatchNorm2d(channel_size)
