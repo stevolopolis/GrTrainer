@@ -1,3 +1,12 @@
+"""
+This file contains all the functions needed for evaluating
+a model.
+
+All functions use the test dataset currently. If you wish to use the
+train dataset, simply change 'params.TEST_PATH' to 'params.TRAIN_PATH'
+on the DataLoader lines.
+"""
+
 import torch
 import cv2
 import random
@@ -13,15 +22,13 @@ from grasp_utils import get_correct_grasp_preds, grasps_to_bboxes, box_iou
 params = Params()
 
 def get_test_acc(model):
+    """Returns the test accuracy and loss of a CLS model."""
     data_loader = DataLoader(params.TEST_PATH, 2, params.TRAIN_VAL_SPLIT)
 
     loss = 0
     correct = 0
     total = 0
     for (img, label) in data_loader.load_batch():
-        if total >= 240:
-            break
-        #output = F.softmax(model(img), dim=1)
         output = model(img)
         loss += torch.nn.CrossEntropyLoss()(output, label).item()
         label = F.one_hot(label, num_classes=params.NUM_CLASS)
@@ -35,15 +42,13 @@ def get_test_acc(model):
 
 
 def get_grasp_acc(model):
+    """Returns the test accuracy and loss of a Grasp model."""
     data_loader = DataLoader(params.TEST_PATH, 2, params.TRAIN_VAL_SPLIT)
 
     loss = 0
     correct = 0
     total = 0
     for (img, label, candidates) in data_loader.load_grasp():
-        if total >= 240:
-            break
-        #output = F.softmax(model(img), dim=1)
         output = model(img)
         loss += torch.nn.MSELoss()(output, label).item()
         batch_correct, batch_total = get_correct_grasp_preds(output, [candidates])
@@ -58,7 +63,8 @@ def get_grasp_acc(model):
 
 
 def visualize_grasp(model):
-    data_loader = DataLoader(params.TRAIN_PATH, 2, params.TRAIN_VAL_SPLIT)
+    """Visualize the model's grasp predictions on test images one by one."""
+    data_loader = DataLoader(params.TEST_PATH, 2, params.TRAIN_VAL_SPLIT)
 
     for (img, label, candidates) in data_loader.load_grasp():
         output = model(img)
@@ -67,6 +73,16 @@ def visualize_grasp(model):
         
 
 def plot_grasp(img, output, label, candidates):
+    """Plots the relevant grasping boxes on the test images and prints out
+    the maximum iou and minimum angle difference of the model's prediction.
+    
+    Grasping boxes visualized:
+        - Model prediction (blue)
+        - Training label (black)
+        - 20% of candidate labels (green)
+    Remarks: grasp plate positions are all colored RED
+
+    """
     output_bbox = grasps_to_bboxes(output)
     target_bboxes = grasps_to_bboxes(candidates)
     label_bbox = grasps_to_bboxes(label)
@@ -97,16 +113,18 @@ def plot_grasp(img, output, label, candidates):
     
     draw_bbox(img_bgr, output_bbox[0], (255, 0, 0))
     draw_bbox(img_bgr, label_bbox[0], (0, 0, 0))
-    """for bbox in target_bboxes:
-        # Choose some random bboxes to show:
+    for bbox in target_bboxes:
+        # Choose some 20% random bboxes to show:
         if random.randint(0, 5) == 0:
-            draw_bbox(img_bgr, bbox, (0, 255, 0))"""
+            draw_bbox(img_bgr, bbox, (0, 255, 0))
 
     cv2.imshow('img', img_bgr)
     cv2.waitKey(0)
 
 
 def draw_bbox(img, bbox, color):
+    """Draw grasp boxes with the grasp-plate edges as RED and the
+    other two edges as <color>."""
     x1 = int(bbox[0] / 1024 * params.OUTPUT_SIZE)
     y1 = int(bbox[1] / 1024 * params.OUTPUT_SIZE)
     x2 = int(bbox[2] / 1024 * params.OUTPUT_SIZE)
